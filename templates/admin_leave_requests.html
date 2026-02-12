@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Leave Requests</title>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+        .dashboard-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .status-approved {
+            background: #16a34a;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .status-declined {
+            background: #dc2626;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .status-pending {
+            background: #f59e0b;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .btn-approve {
+            background: #16a34a;
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        .btn-decline {
+            background: #dc2626;
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <span class="navbar-brand text-white fw-bold fs-4">
+            <i class="fas fa-user-shield me-2"></i>Admin Leave Requests
+        </span>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-light">
+            <i class="fas fa-arrow-left me-1"></i>Back
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <div class="dashboard-card">
+        <h3 class="mb-4 text-center">
+            <i class="fas fa-calendar-alt me-2"></i>Student Leave Requests
+        </h3>
+
+        {% if leaves %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Student</th>
+                        <th>Roll No</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for leave in leaves %}
+                    <tr>
+                        <td>{{ leave.name }}</td>
+                        <td>{{ leave.roll_no }}</td>
+                        <td>{{ leave.email }}</td>
+                        <td>{{ leave.phone }}</td>
+                        <td>{{ leave.start_date.strftime('%d %b %Y') }}</td>
+                        <td>{{ leave.end_date.strftime('%d %b %Y') }}</td>
+                        <td title="{{ leave.description }}">
+                            {{ leave.description[:40] }}{% if leave.description|length > 40 %}...{% endif %}
+                        </td>
+                        <td>
+                            {% if leave.status == 'approved' %}
+                                <span class="status-approved">Approved</span>
+                            {% elif leave.status == 'declined' %}
+                                <span class="status-declined">Declined</span>
+                            {% else %}
+                                <span class="status-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if leave.status == 'pending' %}
+                                <a href="{{ url_for('update_leave_status', leave_id=leave.id, status='approved') }}"
+                                   class="btn btn-sm btn-approve me-1">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                <a href="{{ url_for('update_leave_status', leave_id=leave.id, status='declined') }}"
+                                   class="btn btn-sm btn-decline">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                <h5>No leave requests found</h5>
+                <p>All student leave requests will appear here.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

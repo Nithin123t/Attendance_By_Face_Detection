@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Attendance System - Face Scan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        .scan-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 2rem 1rem;
+            margin: -2rem -2rem 2rem -2rem;
+            border: none;
+        }
+        .card-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .video-container {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        video {
+            border-radius: 10px;
+            border: 3px solid #059669;
+            max-width: 100%;
+            height: auto;
+        }
+        .alert {
+            border-radius: 10px;
+            border: none;
+            font-weight: 500;
+        }
+        .time-notice {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <span class="navbar-brand text-white fw-bold fs-4">
+                <i class="fas fa-camera me-2"></i>Face Attendance System
+            </span>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Time Notice -->
+        <div class="time-notice">
+            <i class="fas fa-clock me-2"></i>
+            Attendance is available from <b>09:00 AM to 10:30 AM</b> only
+        </div>
+
+        <div class="scan-card">
+            <div class="card-header">
+                <h1><i class="fas fa-camera me-3"></i>Face Recognition Attendance</h1>
+                <p class="mb-0 mt-2 opacity-75">Position your face in front of the camera</p>
+            </div>
+
+            <div class="video-container">
+                <video id="video" width="420" autoplay></video>
+                <canvas id="canvas" width="420" height="320" style="display:none;"></canvas>
+            </div>
+
+            <!-- Status Message -->
+            <div id="status" class="alert mt-3" style="display:none;"></div>
+
+            <!-- Success Sound -->
+            <audio id="successSound" src="/static/sounds/successed-295058.mp3"></audio>
+        </div>
+    </div>
+
+    <script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const statusDiv = document.getElementById("status");
+    const successSound = document.getElementById("successSound");
+
+    let lastStudent = null; // prevent repeat sound
+
+    // Start camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => video.srcObject = stream)
+    .catch(err => {
+        alert("Camera access denied!");
+    });
+
+    // Scan every 4 seconds
+    setInterval(() => {
+
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = canvas.toDataURL("image/jpeg");
+
+        fetch("/scan-face", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: imageData })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            statusDiv.style.display = "block";
+
+            // ⛔ Attendance time blocked
+            if (data.status === "blocked") {
+                statusDiv.className = "alert alert-warning";
+                statusDiv.innerHTML = "<i class='fas fa-clock me-2'></i>" + data.message;
+                return;
+            }
+
+            // ✅ First successful scan
+            if (data.status === "success") {
+                statusDiv.className = "alert alert-success";
+                statusDiv.innerHTML = "<i class='fas fa-check-circle me-2'></i>Attendance marked for <b>" + data.name + "</b>";
+
+                if (lastStudent !== data.name) {
+                    successSound.play();
+                    lastStudent = data.name;
+                }
+                return;
+            }
+
+            // 🔒 Already marked
+            if (data.status === "already_marked") {
+                statusDiv.className = "alert alert-info";
+                statusDiv.innerHTML = "<i class='fas fa-info-circle me-2'></i>" + data.message;
+                return;
+            }
+
+            // ❌ Unknown face
+            statusDiv.className = "alert alert-danger";
+            statusDiv.innerHTML = "<i class='fas fa-times-circle me-2'></i>Face not recognized";
+            lastStudent = null;
+        });
+
+    }, 4000);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</body>
+</html>

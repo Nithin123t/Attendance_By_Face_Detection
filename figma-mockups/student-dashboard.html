@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Attendance System - Student Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        .stats-card {
+            text-align: center;
+            padding: 2rem;
+        }
+        .stats-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        .stats-title {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        .welcome-section {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .welcome-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .welcome-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0.5rem 0 0 0;
+        }
+        .table {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .table thead th {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        .table tbody tr:hover {
+            background: rgba(30, 60, 114, 0.1);
+        }
+        .badge-present {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .badge-absent {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .btn-logout {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <span class="navbar-brand text-white fw-bold fs-4">
+                <i class="fas fa-camera me-2"></i>Face Attendance System
+            </span>
+            <button class="btn btn-logout">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Welcome Section -->
+        <div class="welcome-section dashboard-card">
+            <h2><i class="fas fa-user-graduate me-3"></i>Welcome, John Doe</h2>
+            <p>View your attendance records and holiday schedule</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="dashboard-card stats-card">
+                    <div class="stats-title">Total Days</div>
+                    <div class="stats-value text-primary">120</div>
+                    <small class="text-muted">Academic days</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="dashboard-card stats-card">
+                    <div class="stats-title">Present</div>
+                    <div class="stats-value text-success">108</div>
+                    <small class="text-muted">90% attendance rate</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="dashboard-card stats-card">
+                    <div class="stats-title">Absent</div>
+                    <div class="stats-value text-danger">12</div>
+                    <small class="text-muted">10% absent rate</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance History -->
+        <div class="dashboard-card p-4 mb-4">
+            <h4 class="mb-3"><i class="fas fa-calendar-check me-2"></i>Attendance History</h4>
+            <div class="table-responsive">
+                <table id="attendance-table" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-01-15</td>
+                            <td>09:15 AM</td>
+                            <td><span class="badge-present">Present</span></td>
+                        </tr>
+                        <tr>
+                            <td>2024-01-14</td>
+                            <td>09:22 AM</td>
+                            <td><span class="badge-present">Present</span></td>
+                        </tr>
+                        <tr>
+                            <td>2024-01-13</td>
+                            <td>N/A</td>
+                            <td><span class="badge-absent">Absent</span></td>
+                        </tr>
+                        <tr>
+                            <td>2024-01-12</td>
+                            <td>09:18 AM</td>
+                            <td><span class="badge-present">Present</span></td>
+                        </tr>
+                        <tr>
+                            <td>2024-01-11</td>
+                            <td>09:20 AM</td>
+                            <td><span class="badge-present">Present</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Holiday Schedule -->
+        <div class="dashboard-card p-4">
+            <h4 class="mb-3"><i class="fas fa-calendar-times me-2"></i>Holiday Schedule</h4>
+            <div class="table-responsive">
+                <table id="holiday-table" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-01-26</td>
+                            <td>Republic Day</td>
+                        </tr>
+                        <tr>
+                            <td>2024-03-08</td>
+                            <td>Women's Day</td>
+                        </tr>
+                        <tr>
+                            <td>2024-04-14</td>
+                            <td>Dr. Ambedkar Jayanti</td>
+                        </tr>
+                        <tr>
+                            <td>2024-05-01</td>
+                            <td>Labor Day</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center text-muted">No more holidays scheduled</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script>
+        // Function to fetch student dashboard data
+        async function loadStudentDashboard() {
+            try {
+                // Fetch attendance data
+                const response = await fetch('/student-dashboard-data');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dashboard data');
+                }
+                const data = await response.json();
+
+                // Update welcome message
+                document.querySelector('.welcome-section h2').innerHTML =
+                    `<i class="fas fa-user-graduate me-3"></i>Welcome, ${data.student_name}`;
+
+                // Update stats
+                document.querySelector('.stats-value.text-primary').textContent = data.total_days;
+                document.querySelector('.stats-value.text-success').textContent = data.present_count;
+                document.querySelector('.stats-value.text-danger').textContent = data.absent_count;
+
+                // Calculate attendance percentage
+                const attendanceRate = data.total_days > 0 ?
+                    Math.round((data.present_count / data.total_days) * 100) : 0;
+                const absentRate = 100 - attendanceRate;
+
+                // Update attendance rate text
+                document.querySelectorAll('small.text-muted')[0].textContent = `${attendanceRate}% attendance rate`;
+                document.querySelectorAll('small.text-muted')[1].textContent = `${absentRate}% absent rate`;
+
+                // Update attendance history table
+                const attendanceTable = document.querySelector('#attendance-table tbody');
+                attendanceTable.innerHTML = '';
+
+                if (data.attendance && data.attendance.length > 0) {
+                    data.attendance.forEach(record => {
+                        const row = document.createElement('tr');
+                        const timeDisplay = record.status === 'Present' ? record.time : 'N/A';
+                        const statusBadge = record.status === 'Present' ?
+                            '<span class="badge-present">Present</span>' :
+                            '<span class="badge-absent">Absent</span>';
+
+                        row.innerHTML = `
+                            <td>${record.date}</td>
+                            <td>${timeDisplay}</td>
+                            <td>${statusBadge}</td>
+                        `;
+                        attendanceTable.appendChild(row);
+                    });
+                } else {
+                    attendanceTable.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No attendance records found</td></tr>';
+                }
+
+                // Update holiday schedule table
+                const holidayTable = document.querySelector('#holiday-table tbody');
+                holidayTable.innerHTML = '';
+
+                if (data.holidays && data.holidays.length > 0) {
+                    data.holidays.forEach(holiday => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${holiday.holiday_date}</td>
+                            <td>${holiday.reason}</td>
+                        `;
+                        holidayTable.appendChild(row);
+                    });
+                } else {
+                    holidayTable.innerHTML = '<tr><td colspan="2" class="text-center text-muted">No holidays scheduled</td></tr>';
+                }
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                // Show error message
+                const container = document.querySelector('.container');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger mt-3';
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Failed to load dashboard data. Please refresh the page.';
+                container.insertBefore(errorDiv, container.firstChild);
+            }
+        }
+
+        // Logout functionality
+        document.querySelector('.btn-logout').addEventListener('click', function() {
+            window.location.href = '/student-logout';
+        });
+
+        // Load dashboard data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudentDashboard();
+        });
+    </script>
+</body>
+</html>

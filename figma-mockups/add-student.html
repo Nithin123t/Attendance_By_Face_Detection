@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+{% block title %}Add Student{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .navbar {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    }
+    .form-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    .card-header {
+        background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+        color: white;
+        text-align: center;
+        padding: 2rem 1rem;
+        border: none;
+    }
+    .card-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .card-body {
+        padding: 3rem;
+    }
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e5e7eb;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #059669;
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+    }
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+    .btn-save {
+        background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(5, 150, 105, 0.3);
+    }
+    .btn-back {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(107, 114, 128, 0.3);
+    }
+    .alert {
+        border-radius: 10px;
+        border: none;
+    }
+    .file-upload {
+        border: 2px dashed #d1d5db;
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        background: #f9fafb;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .file-upload:hover {
+        border-color: #059669;
+        background: #ecfdf5;
+    }
+    .file-upload i {
+        font-size: 3rem;
+        color: #9ca3af;
+        margin-bottom: 1rem;
+    }
+    .file-upload:hover i {
+        color: #059669;
+    }
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #059669;
+        margin: 2rem 0 1rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #ecfdf5;
+    }
+    .input-group-text {
+        background: #f8fafc;
+        border: 2px solid #e5e7eb;
+        border-right: none;
+        color: #6b7280;
+    }
+</style>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <span class="navbar-brand text-white fw-bold fs-4">
+            <i class="fas fa-camera me-2"></i>Face Attendance System
+        </span>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="form-card">
+        <div class="card-header">
+            <h1><i class="fas fa-user-plus me-3"></i>Add New Student</h1>
+            <p>Register a new student in the system</p>
+        </div>
+        <div class="card-body">
+            <!-- Error Alert -->
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                <!-- Basic Details Section -->
+                <h3 class="section-title"><i class="fas fa-id-card me-2"></i>Basic Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name</label>
+                        <div class="input-group">
+                            <input type="text" name="name" class="form-control" placeholder="Enter student's full name" required>
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Age</label>
+                        <div class="input-group">
+                            <input type="number" name="age" class="form-control" placeholder="Enter age" min="1" max="100" required>
+                            <span class="input-group-text"><i class="fas fa-birthday-cake"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Roll Number</label>
+                        <div class="input-group">
+                            <input type="text" name="roll_no" class="form-control" placeholder="Enter roll number" required>
+                            <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Course</label>
+                        <div class="input-group">
+                            <input type="text" name="course" class="form-control" placeholder="Enter course name" required>
+                            <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Credentials Section -->
+                <h3 class="section-title"><i class="fas fa-key me-2"></i>Login Credentials</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Username</label>
+                        <div class="input-group">
+                            <input type="text" name="student_username" class="form-control" placeholder="Choose a username" required>
+                            <span class="input-group-text"><i class="fas fa-at"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" name="student_password" class="form-control" placeholder="Create password" required>
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Details Section -->
+                <h3 class="section-title"><i class="fas fa-address-book me-2"></i>Contact Information</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <input type="email" name="email" class="form-control" placeholder="Enter email address" required>
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <div class="input-group">
+                            <input type="tel" name="phone" class="form-control" placeholder="Enter phone number" pattern="[0-9]{10}" required>
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Face Images Section -->
+                <h3 class="section-title"><i class="fas fa-camera me-2"></i>Face Recognition Setup</h3>
+                <div class="file-upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h5>Upload Face Images</h5>
+                    <p class="text-muted mb-0">Click to select or drag and drop multiple clear face images</p>
+                    <small class="text-muted">Supported formats: JPG, PNG, JPEG | Max 5MB each</small>
+                    <input type="file" name="images" class="d-none" multiple accept="image/*" required>
+                </div>
+                <div class="form-text">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Upload clear, front-facing images with good lighting for accurate recognition
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-success btn-save flex-fill">
+                        <i class="fas fa-save me-2"></i>Save Student
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-back">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileUploadDiv = document.querySelector('.file-upload');
+
+    // Make the div clickable to trigger file input
+    fileUploadDiv.addEventListener('click', function() {
+        const currentInput = this.querySelector('input[name="images"]');
+        if (currentInput) currentInput.click();
+    });
+
+    // Handle file selection
+    function handleFileChange() {
+        const files = this.files;
+        if (files.length > 0) {
+            fileUploadDiv.innerHTML = `
+                <i class="fas fa-check-circle text-success"></i>
+                <h5>${files.length} file(s) selected</h5>
+                <p class="text-muted mb-0">Ready to upload</p>
+                <small class="text-muted">Click to change selection</small>
+                <input type="file" name="images" class="d-none" multiple accept="image/*" required>
+            `;
+            // Reattach event listener to the new input
+            const newFileInput = fileUploadDiv.querySelector('input[name="images"]');
+            newFileInput.addEventListener('change', handleFileChange);
+        }
+    }
+
+    // Attach initial change listener
+    const initialInput = fileUploadDiv.querySelector('input[name="images"]');
+    initialInput.addEventListener('change', handleFileChange);
+
+    // Drag and drop functionality
+    fileUploadDiv.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('bg-light');
+    });
+
+    fileUploadDiv.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('bg-light');
+    });
+
+    fileUploadDiv.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('bg-light');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            // Create a new DataTransfer object and add the dropped files
+            const dt = new DataTransfer();
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    dt.items.add(file);
+                }
+            }
+            const currentInput = this.querySelector('input[name="images"]');
+            if (currentInput) {
+                currentInput.files = dt.files;
+                // Trigger change event
+                const event = new Event('change');
+                currentInput.dispatchEvent(event);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

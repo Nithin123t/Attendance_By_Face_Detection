@@ -1,0 +1,7 @@
+__pycache__/
+venv/
+*.pyc
+dataset/*.jpg
+dataset/*.jpeg
+dataset/*.png
+dataset/*.html
